@@ -27,44 +27,41 @@ produceMaps <- function() {
   world_data_map <- map_data('world')
   
   speed_map_dataset <<- left_join(world_data_map, speed_mean_country, by = c('region' = 'country'))
-  quality_map_dataset <<- left_join(world_data_map, quality_mean_country, by = c('region' = 'country'))
   
   # Download Speed Map
   download_speed_map <<- ggplot(data = speed_map_dataset, aes(x = long, y = lat, group = group)) +
     geom_polygon(aes(fill = m_download_kbps)) + 
     labs(title = "World Internet Connection", subtitle = "Download Speed in Kbps", caption = "Source: Ookla") + 
     scale_fill_gradient(low = "red", high = "green", guide = "colourbar") +
-    theme_bw()
+    theme_void()
   
   # Upload Speed Map
   upload_speed_map <<- ggplot(data = speed_map_dataset, aes(x = long, y = lat, group = group)) +
     geom_polygon(aes(fill = m_upload_kbps)) + 
     labs(title = "World Internet Connection", subtitle = "Upload Speed in Kbps", caption = "Source: Ookla") + 
     scale_fill_gradient(low = "red", high = "green", guide = "colourbar") +
-    theme_bw()
-  
-  # Latency Map
-  latency_map <<- ggplot(data = quality_mean_country, aes(x = long, y = lat, group = group)) +
-    geom_polygon(aes(fill = m_latency)) + 
-    labs(title = "World Internet Connection", subtitle = "Latency", caption = "Source: Ookla") + 
-    scale_fill_gradient(low = "red", high = "green", guide = "colourbar") +
-    theme_bw()
-  
-  # Packet Loss Map
-  upload_speed_map <<- ggplot(data = quality_mean_country, aes(x = long, y = lat, group = group)) +
-    geom_polygon(aes(fill = m_packet_loss)) + 
-    labs(title = "World Internet Connection", subtitle = "Packet Loss", caption = "Source: Ookla") + 
-    scale_fill_gradient(low = "red", high = "green", guide = "colourbar") +
-    theme_bw()
+    theme_void()
 }
 
 produceCharts <- function() {
  
-  # Histograms
-  speed_download_hist <- ggplot(data = speed_mean_country, aes(x = reorder(country, m_download_kbps), y = m_download_kbps)) +
-    geom_bar(stat="identity") + coord_flip()
+  # Packet Loss Histogram
+  packet_loss_hist <<- ggplot(data = quality_mean_country, aes(x = reorder(country, m_packet_loss), y = m_packet_loss)) +
+    geom_bar(stat="identity") +
+    coord_flip()
   
+  # Latency Histogram
+  latency_hist <<- ggplot(data = quality_mean_country, aes(x = reorder(country, m_latency), y = m_latency)) +
+    geom_bar(stat="identity") +
+    coord_flip()
   
-  ggplot(data = quality_ookla_mean_country, aes(x = reorder(country, m_packet_loss), y = m_packet_loss)) +
-    geom_bar(stat="identity") + coord_flip() 
+  # Fastest City of Country.
+  speed_city_hist <<- ggplot(data = speed_max_city, aes(x = reorder(city, m_download_kbps), y = m_download_kbps)) +
+    geom_bar(stat="identity") +
+    coord_flip()
+  
+  # Fastest ISP of Country.
+  speed_isp_hist <<- ggplot(data = speed_max_isp, aes(x = reorder(isp_name, m_download_kbps), y = m_download_kbps)) +
+    geom_bar(stat="identity") +
+    coord_flip()
 }
