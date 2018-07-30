@@ -20,4 +20,4 @@ city_isp_daily_speeds <<- read_csv("city_isp_daily_speeds.csv")
 
 calculateInternetSpeedAndQuality()
 mapsDataCleaning()
-
+produceMaps()
